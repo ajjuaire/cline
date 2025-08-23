@@ -26,10 +26,11 @@ Below is the the user's input when they indicated that they wanted to create a n
 </explicit_instructions>\n
 `
 
-export const condenseToolResponse = () =>
+export const condenseToolResponse = (focusChainSettings?: { enabled: boolean }) =>
 	`<explicit_instructions type="condense">
 The user has explicitly asked you to create a detailed summary of the conversation so far, which will be used to compact the current context window while retaining key information. The user may have provided instructions or additional information for you to consider when summarizing the conversation.
-Irrespective of whether additional information or instructions are given, you are only allowed to respond to this message by calling the condense tool.
+
+You have only two options: If you are immediately prepared to call the attempt_task_completion tool, and have completed all items in your task_progress list, you may call attempt_task_completion at this time. If you are not prepared to call the attempt_task_completion tool, and have not completed all items in your task_progress list, you must call the condense tool.
 
 The condense tool is defined below:
 
@@ -39,17 +40,27 @@ The user will be presented with a preview of your generated summary and can choo
 Users may refer to this tool as 'smol' or 'compact' as well. You should consider these to be equivalent to 'condense' when used in a similar context.
 
 Parameters:
-- Context: (required) The context to continue the conversation with. If applicable based on the current task, this should include:
+- context: (required) The context to continue the conversation with. If applicable based on the current task, this should include:
   1. Previous Conversation: High level details about what was discussed throughout the entire conversation with the user. This should be written to allow someone to be able to follow the general overarching conversation flow.
   2. Current Work: Describe in detail what was being worked on prior to this request to compact the context window. Pay special attention to the more recent messages / conversation.
   3. Key Technical Concepts: List all important technical concepts, technologies, coding conventions, and frameworks discussed, which might be relevant for continuing with this work.
   4. Relevant Files and Code: If applicable, enumerate specific files and code sections examined, modified, or created for the task continuation. Pay special attention to the most recent messages and changes.
   5. Problem Solving: Document problems solved thus far and any ongoing troubleshooting efforts.
   6. Pending Tasks and Next Steps: Outline all pending tasks that you have explicitly been asked to work on, as well as list the next steps you will take for all outstanding work, if applicable. Include code snippets where they add clarity. For any next steps, include direct quotes from the most recent conversation showing exactly what task you were working on and where you left off. This should be verbatim to ensure there's no information loss in context between tasks.
+${
+	focusChainSettings?.enabled
+		? `- task_progress: (required) The current state of the task_progress list, with completed items marked. Important information on this parameter is as follows:
+  1. XML schema matches that of prior task_progress lists.
+  2. All items are retained, with the exact same desciptive content as in prior occurences.
+  3. All completed items are marked as completed.
+  4. The only compenent of this list that can be changed is the compeletion state of invidiual items in the list`
+		: ""
+}
 
 Usage:
 <condense>
 <context>Your detailed summary</context>
+${focusChainSettings?.enabled ? `<task_progress>task_progress list here</task_progress>` : ""}
 </condense>
 
 Example:
@@ -83,6 +94,16 @@ Example:
   - [Task 2 details & next steps]
   - [...]
 </context>
+${
+	focusChainSettings?.enabled
+		? `<task_progress>
+- [x] Set up project structure
+- [x] Install dependencies
+- [ ] Create components
+- [ ] Test application
+</task_progress>`
+		: ""
+}
 </condense>
 
 </explicit_instructions>\n

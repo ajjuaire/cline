@@ -2613,6 +2613,7 @@ export class Task {
 								localWorkflowToggles,
 								globalWorkflowToggles,
 								this.ulid,
+								this.focusChainSettings,
 							)
 
 							if (needsCheck) {

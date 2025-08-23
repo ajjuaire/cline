@@ -18,13 +18,14 @@ export async function parseSlashCommands(
 	localWorkflowToggles: ClineRulesToggles,
 	globalWorkflowToggles: ClineRulesToggles,
 	ulid: string,
+	focusChainSettings?: { enabled: boolean },
 ): Promise<{ processedText: string; needsClinerulesFileCheck: boolean }> {
 	const SUPPORTED_DEFAULT_COMMANDS = ["newtask", "smol", "compact", "newrule", "reportbug", "deep-planning"]
 
 	const commandReplacements: Record<string, string> = {
 		newtask: newTaskToolResponse(),
-		smol: condenseToolResponse(),
-		compact: condenseToolResponse(),
+		smol: condenseToolResponse(focusChainSettings),
+		compact: condenseToolResponse(focusChainSettings),
 		newrule: newRuleToolResponse(),
 		reportbug: reportBugToolResponse(),
 		"deep-planning": deepPlanningToolResponse(),
