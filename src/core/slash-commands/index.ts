@@ -28,7 +28,7 @@ export async function parseSlashCommands(
 		compact: condenseToolResponse(focusChainSettings),
 		newrule: newRuleToolResponse(),
 		reportbug: reportBugToolResponse(),
-		"deep-planning": deepPlanningToolResponse(),
+		"deep-planning": deepPlanningToolResponse(focusChainSettings),
 	}
 
 	// this currently allows matching prepended whitespace prior to /slash-command

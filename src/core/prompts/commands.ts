@@ -198,7 +198,7 @@ Below is the user's input when they indicated that they wanted to submit a Githu
 </explicit_instructions>\n
 `
 
-export const deepPlanningToolResponse = () => {
+export const deepPlanningToolResponse = (focusChainSettings?: { enabled: boolean }) => {
 	const detectedShell = require("@utils/shell").getShell()
 	const isPowerShell = detectedShell.toLowerCase().includes("powershell") || detectedShell.toLowerCase().includes("pwsh")
 
@@ -413,6 +413,14 @@ task_progress Items:
 You also MUST include the path to the markdown file you have created in your new task prompt. You should do this as follows:
 
 Refer to @path/to/file/markdown.md for a complete breakdown of the task requirements and steps. You should periodically read this file again.
+
+${
+	focusChainSettings?.enabled
+		? `
+**Task Progress Parameter:**
+When creating the new task, you must include a task_progress parameter that breaks down the implementation into trackable steps. This should follow the standard Markdown checklist format with "- [ ]" for incomplete items.`
+		: ""
+}
 
 
 

@@ -2239,7 +2239,7 @@ export class Task {
 			}
 
 			if (shouldCompact) {
-				userContent.push({ type: "text", text: summarizeTask(this.focusChainSettings.enabled) })
+				userContent.push({ type: "text", text: summarizeTask(this.focusChainSettings) })
 			}
 		} else {
 			const [parsedUserContent, environmentDetails, clinerulesError] = await this.loadContext(
