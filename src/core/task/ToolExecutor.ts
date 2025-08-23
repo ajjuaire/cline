@@ -38,7 +38,7 @@ import { SummarizeTaskHandler } from "./tools/handlers/SummarizeTaskHandler"
 import { UseMcpToolHandler } from "./tools/handlers/UseMcpToolHandler"
 import { WebFetchToolHandler } from "./tools/handlers/WebFetchToolHandler"
 import { WriteToFileToolHandler } from "./tools/handlers/WriteToFileToolHandler"
-import { ToolExecutorCoordinator } from "./tools/ToolExecutorCoordinator"
+import { IPartialBlockHandler, SharedToolHandler, ToolExecutorCoordinator } from "./tools/ToolExecutorCoordinator"
 import { ToolValidator } from "./tools/ToolValidator"
 import { TaskConfig, validateTaskConfig } from "./tools/types/TaskConfig"
 import { createUIHelpers } from "./tools/types/UIHelpers"
@@ -179,19 +179,11 @@ export class ToolExecutor {
 		this.coordinator.register(new AskFollowupQuestionToolHandler())
 		this.coordinator.register(new WebFetchToolHandler())
 
-		// Register WriteToFileToolHandler for all three file tools (now fully self-managed)
+		// Register WriteToFileToolHandler for all three file tools with proper typing
 		const writeHandler = new WriteToFileToolHandler(validator)
 		this.coordinator.register(writeHandler) // registers as "write_to_file"
-		this.coordinator.register({
-			name: "replace_in_file",
-			execute: writeHandler.execute.bind(writeHandler),
-			handlePartialBlock: writeHandler.handlePartialBlock.bind(writeHandler),
-		} as any)
-		this.coordinator.register({
-			name: "new_rule",
-			execute: writeHandler.execute.bind(writeHandler),
-			handlePartialBlock: writeHandler.handlePartialBlock.bind(writeHandler),
-		} as any)
+		this.coordinator.register(new SharedToolHandler("replace_in_file", writeHandler))
+		this.coordinator.register(new SharedToolHandler("new_rule", writeHandler))
 
 		this.coordinator.register(new ListCodeDefinitionNamesToolHandler(validator))
 		this.coordinator.register(new SearchFilesToolHandler(validator))
@@ -345,10 +337,11 @@ export class ToolExecutor {
 		// This maintains separation of concerns: partial = UI updates, complete = final state changes.
 		const handler = this.coordinator.getHandler(block.name)
 
-		// Check if handler supports partial blocks
+		// Check if handler supports partial blocks with proper typing
 		if (handler && "handlePartialBlock" in handler) {
 			const uiHelpers = createUIHelpers(config)
-			await (handler as any).handlePartialBlock(block, uiHelpers)
+			const partialHandler = handler as IPartialBlockHandler
+			await partialHandler.handlePartialBlock(block, uiHelpers)
 		}
 	}
 

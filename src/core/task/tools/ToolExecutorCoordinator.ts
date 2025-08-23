@@ -17,6 +17,25 @@ export interface IFullyManagedTool extends IToolHandler, IPartialBlockHandler {
 }
 
 /**
+ * A wrapper class that allows a single tool handler to be registered under multiple names.
+ * This provides proper typing for tools that share the same implementation logic.
+ */
+export class SharedToolHandler implements IFullyManagedTool {
+	constructor(
+		public readonly name: string,
+		private baseHandler: IFullyManagedTool,
+	) {}
+
+	async execute(config: TaskConfig, block: ToolUse): Promise<ToolResponse> {
+		return this.baseHandler.execute(config, block)
+	}
+
+	async handlePartialBlock(block: ToolUse, uiHelpers: StronglyTypedUIHelpers): Promise<void> {
+		return this.baseHandler.handlePartialBlock(block, uiHelpers)
+	}
+}
+
+/**
  * Coordinates tool execution by routing to registered handlers.
  * Falls back to legacy switch for unregistered tools.
  */
