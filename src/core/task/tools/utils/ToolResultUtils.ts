@@ -2,7 +2,6 @@ import { ApiHandler } from "@core/api"
 import { ToolUse } from "@core/assistant-message"
 import { formatResponse } from "@core/prompts/responses"
 import { ToolResponse } from "@core/task"
-import { processFilesIntoText } from "@integrations/misc/extract-text"
 
 /**
  * Utility functions for handling tool results and feedback
