@@ -1,6 +1,8 @@
+import { telemetryService } from "@services/posthog/PostHogClientProvider"
 import type { ClineAsk, ClineSay } from "@shared/ExtensionMessage"
 import type { ClineAskResponse } from "@shared/WebviewMessage"
 import type { ToolParamName, ToolUse, ToolUseName } from "../../../assistant-message"
+import { showNotificationForApprovalIfAutoApprovalEnabled } from "../../utils"
 import type { TaskConfig } from "./TaskConfig"
 
 /**
@@ -72,13 +74,9 @@ export function createUIHelpers(config: TaskConfig): StronglyTypedUIHelpers {
 			return response === "yesButtonClicked"
 		},
 		captureTelemetry: (toolName: ToolUseName, autoApproved: boolean, approved: boolean) => {
-			// Import telemetry service dynamically to avoid circular dependencies
-			const { telemetryService } = require("@services/posthog/PostHogClientProvider")
 			telemetryService.captureToolUsage(config.ulid, toolName, config.api.getModel().id, autoApproved, approved)
 		},
 		showNotificationIfEnabled: (message: string) => {
-			// Import notification function dynamically to avoid circular dependencies
-			const { showNotificationForApprovalIfAutoApprovalEnabled } = require("../../utils")
 			showNotificationForApprovalIfAutoApprovalEnabled(
 				message,
 				config.autoApprovalSettings.enabled,
