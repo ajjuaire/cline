@@ -64,14 +64,4 @@ export class ToolResultUtils {
 			userMessageContent.push(...content)
 		}
 	}
-
-	/**
-	 * Process files into text content for feedback
-	 */
-	static async processFilesForFeedback(files?: string[]): Promise<string> {
-		if (!files || files.length === 0) {
-			return ""
-		}
-		return await processFilesIntoText(files)
-	}
 }
