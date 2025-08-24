@@ -2,8 +2,6 @@
 
 ## 3.26.6
 
-### Patch Changes
-
 - cd066c4: fix issue with gpt-5 not using auto-compact even when toggled on
 
 ## [3.26.5]
