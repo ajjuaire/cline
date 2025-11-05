@@ -1,2 +1,7 @@
 [blame]
 ignoreRevsFile = .git-blame-ignore-revs
+
+[user]
+    name = AJ Juaire
+    email = 46756248+ajjuaire@users.noreply.github.com
+
